@@ -97,10 +97,10 @@ void Logger::log(void){
 	}
 
 	// write data to SD
-	if (writtenBlocks >= FILE_BLOCK_COUNT) {
+	/*if (writtenBlocks >= FILE_BLOCK_COUNT) {
 		printer.printMessage("Current file size limit reached. Change FILE_BLOCK_COUNT to fix. Stopping logging for now.",0);
 		keepLogging = false;
-	}
+	}*/
 
 	file = SD.open(logfilename, FILE_WRITE);
 	if (file) {

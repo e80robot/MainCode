@@ -27,6 +27,9 @@ Previous Contributors:
 #include <PControl.h>
 #define UartSerial Serial1
 #include <GPSLockLED.h>
+#include <MPUSource.h>
+
+#include "MPU9250.h"
 
 /////////////////////////* Global Variables *////////////////////////
 
@@ -39,9 +42,12 @@ ADCSampler adc;
 ErrorFlagSampler ef;
 ButtonSampler button_sampler;
 SensorIMU imu;
+MPUSource MPUimu;
 Logger logger;
 Printer printer;
 GPSLockLED led;
+
+MPU9250 mpu9250(MPU9250_ADDRESS, I2Cport, I2Cclock);
 
 // loop start recorder
 int loopStartTime;
@@ -99,7 +105,7 @@ void setup() {
 void loop() {
   currentTime=millis();
   
-  if ( currentTime-printer.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-printer.lastExecutionTime >= LOOP_PERIOD ) {
     printer.lastExecutionTime = currentTime;
     printer.printValue(0,adc.printSample());
     printer.printValue(1,ef.printStates());
@@ -114,18 +120,18 @@ void loop() {
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 
-  if ( currentTime-pcontrol.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-pcontrol.lastExecutionTime >= LOOP_PERIOD ) {
     pcontrol.lastExecutionTime = currentTime;
     pcontrol.calculateControl(&state_estimator.state, &gps.state);
     motor_driver.drive(pcontrol.uL,pcontrol.uR,0);
   }
 
-  if ( currentTime-adc.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-adc.lastExecutionTime >= LOOP_PERIOD ) {
     adc.lastExecutionTime = currentTime;
     adc.updateSample(); 
   }
 
-  if ( currentTime-ef.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-ef.lastExecutionTime >= LOOP_PERIOD ) {
     ef.lastExecutionTime = currentTime;
     attachInterrupt(digitalPinToInterrupt(ERROR_FLAG_A), EFA_Detected, LOW);
     attachInterrupt(digitalPinToInterrupt(ERROR_FLAG_B), EFB_Detected, LOW);
@@ -141,32 +147,32 @@ void loop() {
   }
 
  // uses the ButtonSampler library to read a button -- use this as a template for new libraries!
-  if ( currentTime-button_sampler.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-button_sampler.lastExecutionTime >= LOOP_PERIOD ) {
     button_sampler.lastExecutionTime = currentTime;
     button_sampler.updateState();
   }
 
-  if ( currentTime-imu.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-imu.lastExecutionTime >= LOOP_PERIOD ) {
     imu.lastExecutionTime = currentTime;
     imu.read();     // blocking I2C calls
   }
  
-  if ( currentTime-gps.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
     gps.lastExecutionTime = currentTime;
     gps.read(&GPS); // blocking UART calls
   }
 
-  if ( currentTime-state_estimator.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-state_estimator.lastExecutionTime >= LOOP_PERIOD ) {
     state_estimator.lastExecutionTime = currentTime;
     state_estimator.updateState(&imu.state, &gps.state);
   }
   
-  if ( currentTime-led.lastExecutionTime > LOOP_PERIOD ) {
+  if ( currentTime-led.lastExecutionTime >= LOOP_PERIOD ) {
     led.lastExecutionTime = currentTime;
     led.flashLED(&gps.state);
   }
 
-  if ( currentTime- logger.lastExecutionTime > LOOP_PERIOD && logger.keepLogging ) {
+  if ( currentTime- logger.lastExecutionTime >= LOOP_PERIOD && logger.keepLogging ) {
     logger.lastExecutionTime = currentTime;
     logger.log();
   }
@@ -183,4 +189,3 @@ void EFB_Detected(void){
 void EFC_Detected(void){
   EF_States[2] = 0;
 }
-

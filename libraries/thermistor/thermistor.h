@@ -1,5 +1,5 @@
-#ifndef __BUTTONSAMPLER_h__
-#define __BUTTONSAMPLER_h__
+#ifndef __THERMISTORSOURCE_h__
+#define __THERMISTORSOURCE_h__
 
 #include <Arduino.h>
 #include "DataSource.h"
@@ -10,15 +10,18 @@
  */
 
 
-class ButtonSampler : public DataSource
+class ThermistorSource : public DataSource
 {
 public:
-  ButtonSampler(void);
+  ThermistorSource(void);
 
   void init(void);
+  
+  int pin;
+  String name;
 
   // Managing state
-  bool buttonState;
+  float pinVoltage;
   void updateState(void);
   String printState(void);
 

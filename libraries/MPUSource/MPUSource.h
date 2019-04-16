@@ -4,26 +4,33 @@
 #include <Arduino.h>
 #include "DataSource.h"
 #include "Pinouts.h"
+#include "MPU9250.h"
 
 /*
  * ButtonSampler implements SD logging for the onboard pushbutton 
  */
 
 
-class ThermistorSource : public DataSource
+class MPUSource : public DataSource
 {
 public:
-  ThermistorSource(void);
+  MPUSource(void);
 
-  void init(void);
-  
-  int pin;
-  String name;
+  void init(MPU9250 * imu);
 
   // Managing state
-  float pinVoltage;
-  void updateState(void);
+  void updateState(MPU9250 * imu);
   String printState(void);
+
+  float ax;
+  float ay;
+  float az;
+  float gx;
+  float gy;
+  float gz;
+  float mx;
+  float my;
+  float mz;
 
   // Write out
   size_t writeDataBytes(unsigned char * buffer, size_t idx);
