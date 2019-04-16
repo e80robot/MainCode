@@ -13,6 +13,7 @@ Previous Contributors:
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+
 #include <Pinouts.h>
 #include <TimingOffsets.h>
 #include <SensorGPS.h>
@@ -27,9 +28,7 @@ Previous Contributors:
 #include <PControl.h>
 #define UartSerial Serial1
 #include <GPSLockLED.h>
-#include <MPUSource.h>
 
-#include "MPU9250.h"
 
 /////////////////////////* Global Variables *////////////////////////
 
@@ -42,12 +41,10 @@ ADCSampler adc;
 ErrorFlagSampler ef;
 ButtonSampler button_sampler;
 SensorIMU imu;
-MPUSource MPUimu;
 Logger logger;
 Printer printer;
 GPSLockLED led;
 
-MPU9250 mpu9250(MPU9250_ADDRESS, I2Cport, I2Cclock);
 
 // loop start recorder
 int loopStartTime;

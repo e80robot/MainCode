@@ -1,6 +1,7 @@
 #include "MPUSource.h"
 #include "Printer.h"
-#include "MPU9250.h"
+#include <MPU9250.h>
+#include <quaternionFilters.h>
 
 extern Printer printer;
 

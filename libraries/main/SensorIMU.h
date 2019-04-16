@@ -7,17 +7,25 @@
 #include "SparkFunIMU.h"
 #include "SparkFunLSM303C.h"
 #include "DataSource.h"
+#include <MPU9250.h>
+#include <quaternionFilters.h>
+
+#define MPU9250_ADDRESS MPU9250_ADDRESS_AD0
 
 typedef struct {
   float accelX;   // [mg] (g=accleration due to gravity)
   float accelY;   // [mg]
   float accelZ;   // [mg]
+  float gyroX;    // [deg/sec]
+  float gyroY;    // [deg/sec]
+  float gyroZ;    // [deg/sec]
   float magX;     // [Gauss]
   float magY;     // [Gauss]
   float magZ;     // [Gauss]
   float roll;     // [degrees]
   float pitch;    // [degrees]
   float heading;  // [degrees] CW from magnetic north
+  float deltat;   // time since last iteration
 } imu_state_t;
 
 class SensorIMU : public DataSource {
@@ -25,12 +33,12 @@ public:
   SensorIMU(void);
 
   // Starts the connection to the sensor
-  void init(void);
+  void init();
 
   // Reads data from the sensor
-  void read(void);
+  void read();
 
-  void getOrientation(float ax, float ay, float az, float mx, float my, float mz); 
+  void getOrientation(); 
 
   // Latest reported orientation data is stored here
   imu_state_t state; 
@@ -47,7 +55,7 @@ public:
 private:
 
   // Create sensor instance
-  LSM303C myIMU;
+  MPU9250 myIMU;
 
   // time at which the imu is initialized [ms]
   unsigned long start_time;
@@ -63,15 +71,15 @@ private:
 
   // Offsets applied to raw x/y/z mag values
   // float mag_offsets[3]        = { 0.00,  0.00,  0.00 };
-  float mag_offsets[3]        = { -0.20, -0.18, -0.15 };
+  float mag_offsets[3]        = { 0.00, 0.00, 0.00 };
 
   // Soft iron error compensation matrix
   // float mag_ironcomp[3][3] =  { {  1.00,     0.00,     0.00   },
   //                               {  0.00,     1.00,     0.00   },
   //                               {  0.00,     0.00,     1.00   } };
-  float mag_ironcomp[3][3] =  { {  2.92,    -0.21,    -0.16   },
-                                {  0.00,     3.02,    -0.04   },
-                                {  0.00,     0.00,     3.01   } };
+  float mag_ironcomp[3][3] =  { {  1.00,     0.00,     0.00   },
+                                {  0.00,     1.00,     0.00   },
+                                {  0.00,     0.00,     1.00   } };
 
 };
 
