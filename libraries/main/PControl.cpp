@@ -107,10 +107,8 @@ void PControl::updatePoint(float x, float y) {
   // note that this means we will not take data on the last waypoint-- by convention sould be pick up point
   if (currentWayPoint == totalWayPoints) return; // don't check if finished
   
-  
-  // push a high out of the desired pin to trigger the pi sequence to take video 
-  if (milis() < 
-  
+  // trigger the pi to take a video
+  piTriggerTimer = millis()+1000;
   
   // get the next waypoint
   int x_des = getWayPoint(0);
