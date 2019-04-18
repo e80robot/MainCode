@@ -114,7 +114,7 @@ void PControl::updatePoint(float x, float y) {
 
   if (dist < SUCCESS_RADIUS && currentWayPoint < totalWayPoints) {
     // trigger the pi to take a video
-    piTriggerTimer = millis()+1000;
+    piTriggerTime = millis()+1000;
     String changingWPMessage = "Got to waypoint " + String(currentWayPoint)
       + ", now directing to next point";
     int cwpmTime = 20;
