@@ -1,6 +1,10 @@
 #include "PControl.h"
 #include "Printer.h"
-#include
+
+// a library to use digitalWrite
+#include "Arduino.h"
+
+
 extern Printer printer;
 
 inline float angleDiff(float a) {
@@ -105,7 +109,7 @@ void PControl::updatePoint(float x, float y) {
   
   
   // push a high out of the desired pin to trigger the pi sequence to take video 
-  
+  if (milis() < 
   
   
   // get the next waypoint
