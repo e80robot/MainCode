@@ -3,7 +3,7 @@
 
 // all times are recorded in units of ms
 // the offsets define when tasks happen within a loop period
-#define LOOP_PERIOD 20
+#define LOOP_PERIOD 50
 #define PRINTER_LOOP_OFFSET 0
 #define IMU_LOOP_OFFSET 1
 #define GPS_LOOP_OFFSET 2

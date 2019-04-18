@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define LONGEST_STRING 80 // characters
+#define LONGEST_STRING 160 // characters
 
 /*
  * Print controls the serial printing for all funtions in Default_Robot, so that

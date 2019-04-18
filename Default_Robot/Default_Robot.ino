@@ -154,7 +154,7 @@ void loop() {
     imu.read();     // blocking I2C calls
   }
  
-  if ( currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
+  if (true) { // currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
     gps.lastExecutionTime = currentTime;
     gps.read(&GPS); // blocking UART calls
   }

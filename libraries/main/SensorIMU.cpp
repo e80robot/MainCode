@@ -19,6 +19,7 @@ void SensorIMU::init(void) {
   myIMU.getAres();
   myIMU.getGres();
   myIMU.getMres();
+  Serial.print("IMU self test completed");
   start_time = millis();
 }
 
@@ -58,7 +59,7 @@ void SensorIMU::read(void) {
     myIMU.mz = (float)myIMU.magCount[2] * myIMU.mRes
                * myIMU.factoryMagCalibration[2] - myIMU.magBias[2];
 
-    myIMU.updateTime();
+
   }
   float ax = myIMU.ax;
   float ay = myIMU.ay;
@@ -81,6 +82,10 @@ void SensorIMU::read(void) {
   state.accelY = ay - accel_offsets[1];
   state.accelZ = az - accel_offsets[2];
 
+  state.gyroX = gx;
+  state.gyroY = gy;
+  state.gyroZ = gz;
+
   // Remove offsets from magnertometer measurements (base values in uTesla)
   mx = mx - mag_offsets[0];
   my = my - mag_offsets[1];
@@ -91,8 +96,19 @@ void SensorIMU::read(void) {
   state.magY = mx * mag_ironcomp[1][0] + my * mag_ironcomp[1][1] + mz * mag_ironcomp[1][2];
   state.magZ = mx * mag_ironcomp[2][0] + my * mag_ironcomp[2][1] + mz * mag_ironcomp[2][2];
 
+  myIMU.mx = state.magX;
+  myIMU.my = state.magY;
+  myIMU.mz = state.magZ;
+
+  myIMU.updateTime();
+
+  myIMU.count = millis();
+  myIMU.sumCount = 0;
+  myIMU.sum = 0;
+
   // populate the roll, pitch, yaw with simple orientation calcs  
   getOrientation();
+  myIMU.delt_t = millis() - myIMU.count;
 }
 
 String SensorIMU::printRollPitchHeading(void) {
@@ -121,6 +137,16 @@ String SensorIMU::printAccels(void) {
   printString += " accelZ: ";
   printString += String(state.accelZ);
   printString += "[mg]";
+
+  printString += " gyroX: ";
+  printString += String(state.gyroX);
+  printString += "[deg/sec], ";
+  printString += " gyroY: ";
+  printString += String(state.gyroY);
+  printString += "[deg/sec], ";
+  printString += " gyroZ: ";
+  printString += String(state.gyroZ);
+  printString += "[deg/sec]";
   return printString;
 
   /*
@@ -160,7 +186,7 @@ size_t SensorIMU::writeDataBytes(unsigned char * buffer, size_t idx) {
 
 void SensorIMU::getOrientation() {
   // copied from Adafruit_Simple_AHRS
-    MahonyQuaternionUpdate(myIMU.ax, myIMU.ay, myIMU.az, myIMU.gx * DEG_TO_RAD,
+    MadgwickQuaternionUpdate(myIMU.ax, myIMU.ay, myIMU.az, myIMU.gx * DEG_TO_RAD,
                          myIMU.gy * DEG_TO_RAD, myIMU.gz * DEG_TO_RAD, myIMU.my,
                          myIMU.mx, myIMU.mz, myIMU.deltat);
 
@@ -183,6 +209,6 @@ void SensorIMU::getOrientation() {
   // convert to degrees
   state.roll *= 180.0/PI_F;
   state.pitch *= 180.0/PI_F;
-  state.heading *= 180.0/PI_F;
+  state.heading *= 180.0/PI_F + 10.5;
   
 }
