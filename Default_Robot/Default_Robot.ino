@@ -176,7 +176,7 @@ void loop() {
   }
     
   // push a high out of the desired pin to trigger the pi sequence to take video 
-  if (millis() < piTriggerTimer) digialWrite(A3, HIGH);
+  if (millis() < piTriggerTime) digialWrite(A3, HIGH);
   else digitalWrite(A3, LOW);
 }
 
