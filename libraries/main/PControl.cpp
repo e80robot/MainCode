@@ -107,17 +107,14 @@ void PControl::updatePoint(float x, float y) {
   // note that this means we will not take data on the last waypoint-- by convention sould be pick up point
   if (currentWayPoint == totalWayPoints) return; // don't check if finished
   
-  // trigger the pi to take a video
-  piTriggerTimer = millis()+1000;
-  
   // get the next waypoint
   int x_des = getWayPoint(0);
   int y_des = getWayPoint(1);
   dist = sqrt(pow(x-x_des,2) + pow(y-y_des,2));
 
   if (dist < SUCCESS_RADIUS && currentWayPoint < totalWayPoints) {
-    
-    
+    // trigger the pi to take a video
+    piTriggerTimer = millis()+1000;
     String changingWPMessage = "Got to waypoint " + String(currentWayPoint)
       + ", now directing to next point";
     int cwpmTime = 20;
