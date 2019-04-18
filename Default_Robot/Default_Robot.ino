@@ -101,7 +101,8 @@ void setup() {
 
 void loop() {
   currentTime=millis();
-  
+    
+   
   if ( currentTime-printer.lastExecutionTime >= LOOP_PERIOD ) {
     printer.lastExecutionTime = currentTime;
     printer.printValue(0,adc.printSample());
@@ -173,6 +174,10 @@ void loop() {
     logger.lastExecutionTime = currentTime;
     logger.log();
   }
+    
+  // push a high out of the desired pin to trigger the pi sequence to take video 
+  if (millis() < piTriggerTimer) digialWrite(A3, HIGH);
+  else digitalWrite(A3, LOW);
 }
 
 void EFA_Detected(void){
