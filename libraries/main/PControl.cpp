@@ -28,6 +28,11 @@ int PControl::getWayPoint(int dim) {
 }
 
 void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p) {
+    // push a high out of the desired pin to trigger the pi sequence to take video 
+  if (millis() < piTriggerTime) digitalWrite(A3, HIGH);
+  else digitalWrite(A3, LOW);
+
+
   if (gps_state_p->num_sat >= N_SATS_THRESHOLD){
     gpsAcquired = 1;
 
