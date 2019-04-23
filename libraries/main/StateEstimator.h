@@ -42,8 +42,14 @@ public:
 
 private:
   // set coordinates of chosen origin below (origin is now center of pHake Lake
-  const float origin_lat = 34.1091;
-  const float origin_lon = -117.712567;
+  // BFS
+  // const float origin_lat = 34.1091;
+  // const float origin_lon = -117.712567;
+
+  // Parsons
+  const float origin_lat = 34.106465;
+  const float origin_lon = -117.712488;
+
   bool gpsAcquired;
 
 

@@ -77,7 +77,8 @@ void setup() {
 
   const int number_of_waypoints = 5;
   const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
-  double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
+  //double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
+  double waypoints [] = { 125, -40, 150, -40, 125, -40  };   // listed as x0,y0,x1,y1, ... etc.
   pcontrol.init(number_of_waypoints, waypoint_dimensions, waypoints);
   
   state_estimator.init(); 
