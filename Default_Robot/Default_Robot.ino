@@ -122,7 +122,8 @@ void loop() {
   if ( currentTime-pcontrol.lastExecutionTime >= LOOP_PERIOD ) {
     pcontrol.lastExecutionTime = currentTime;
     pcontrol.calculateControl(&state_estimator.state, &gps.state);
-    motor_driver.drive(pcontrol.uL,pcontrol.uR,0);
+    //motor_driver.drive(pcontrol.uL,pcontrol.uR,0);
+    motor_driver.drive(pcontrol.uL,pcontrol.uR,pcontrol.uV);
   }
 
   if ( currentTime-adc.lastExecutionTime >= LOOP_PERIOD ) {
