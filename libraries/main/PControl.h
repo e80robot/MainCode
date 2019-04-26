@@ -55,6 +55,9 @@ private:
   double * wayPoints;
   int currentWayPoint = 0;
   bool gpsAcquired;
+  unsigned long startTime;
+  unsigned long beginMoving;
+  unsigned long currentTime;
 };
 
 #endif
