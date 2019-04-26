@@ -13,7 +13,7 @@ inline float angleDiff(float a) {
   return a;
 }
 
-PControl::PControl(void) 
+PControl::PControl(void)
 : DataSource("u,uL,uR,yaw,yaw_des","float,float,float,float,float"){}
 
 
@@ -21,52 +21,75 @@ void PControl::init(const int totalWayPoints_in, const int stateDims_in, double 
   totalWayPoints = totalWayPoints_in;
   stateDims = stateDims_in;
   wayPoints = wayPoints_in;
+  // create a variable to calculate current time in "calculateControl"
+  startTime = millis();
+  // the robot starts the hard coded sequence once beginMoving has passed
+  // ************************************
+  // ***** CHANGE FOR DEPLOYMENT ********
+  // ************************************
+  beginMoving = startTime + 10000;
+  // a variable to help determine when to stop moving
+  condCounter = 0;
 }
 
 int PControl::getWayPoint(int dim) {
   return wayPoints[currentWayPoint*stateDims+dim];
 }
 
-void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p) {
-    // push a high out of the desired pin to trigger the pi sequence to take video 
-  if (millis() < piTriggerTime) digitalWrite(A3, HIGH);
-  else digitalWrite(A3, LOW);
+void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
+  // by default push LOW and set motor PWM to be 0
+  digitalWrite(A3, LOW);
+  uL = 0.0;
+  uR = 0.0;
+  uV = 0.0;
 
+  // figure out how long it's been since boot (mod by total cycle time)
+  currentTime = (millis() - startTime) % 110000;
 
-  if (gps_state_p->num_sat >= N_SATS_THRESHOLD){
-    gpsAcquired = 1;
-
-    updatePoint(state->x, state->y);
-    if (currentWayPoint == totalWayPoints) return; // stops motors at final point
-
-    // set up variables
-    int x_des = getWayPoint(0);
-    int y_des = getWayPoint(1);
-
-    // Set the values of yaw_des, yaw, control effort (u), uL, and uR appropriately
-    // You can use trig functions (atan2 might be useful)
-    // You can access the x and y coordinates calculated in StateEstimator.cpp using state->x and state->y respectively
-    // You can access the heading calculated in StateEstimator.cpp using state->heading
-
-    //////////////////////////////////////////////////////////////////////
-    // write code here
-    //////////////////////////////////////////////////////////////////////
-
-    yaw_des = atan2(y_des - state->y, x_des - state->x);
-    yaw = state->yaw;
-    u = Kp*angleDiff(yaw_des - yaw);
-
-    uL = max(0.0,min(255.0,(avgPower - u)*Kl));
-    uR = max(0.0,min(255.0,(avgPower + u)*Kr));
-
-    ///////////////////////////////////////////////////////////////////////
-    // don't change code past this point
-    ///////////////////////////////////////////////////////////////////////
+  // *********** HARD CODING IN MOVEMENT FOR THE ROBOT ***********
+  // check if we've run the move forward/take video/dive more than 10 times
+  if (condCounter >= 50){
+    uL = 0.0;
+    uR = 0.0;
+    uV = 0.0;
   }
-  else{
-    gpsAcquired = 0;
+  // move forward for 20 seconds
+  else if((currentTime >= beginMoving) && (currentTime <= beginMoving + 20000)) {
+    uL = 255.0;
+    uR = 255.0;
+    uV = 0.0;
+    condCounter++;
   }
-
+  // trigger the camera to take video at surface level
+  else if((currentTime >= beginMoving + 23000) && (currentTime <= beginMoving + 23200)){
+    uL = 0.0;
+    uR = 0.0;
+    uV = 0.0;
+    digitalWrite(A3, HIGH);
+    condCounter++;
+  }
+  // dive down for 5 seconds
+  else if((currentTime >= beginMoving + 60000) && (currentTime <= beginMoving + 65000)){
+    uL = 0.0;
+    uR = 0.0;
+    uV = 255.0;
+    condCounter++;
+  }
+  // trigger camera to take video at the depth we've arrived at
+  else if((currentTime >= beginMoving + 65000) && (currentTime <= beginMoving + 65200)){
+    uL = 0.0;
+    uR = 0.0;
+    uV = 0.0; // this should be some value which holds us stationart (0.0 now)
+    digitalWrite(A3, HIGH);
+    condCounter++;
+  }
+  // return to the surface (estimated 10 seconds required)
+  else if((currentTime >= beginMoving + 100000) && (currentTime <= beginMoving + 110000)){
+    uL = 0.0;
+    uR = 0.0;
+    uV = -255.0;
+    condCounter++;
+  }
 }
 
 String PControl::printString(void) {
@@ -88,7 +111,7 @@ String PControl::printString(void) {
     printString += String(uL);
     printString += ", u_R: ";
     printString += String(uR);
-  } 
+  }
   return printString;
 }
 
@@ -111,7 +134,7 @@ String PControl::printWaypointUpdate(void) {
 void PControl::updatePoint(float x, float y) {
   // note that this means we will not take data on the last waypoint-- by convention sould be pick up point
   if (currentWayPoint == totalWayPoints) return; // don't check if finished
-  
+
   // get the next waypoint
   int x_des = getWayPoint(0);
   int y_des = getWayPoint(1);
