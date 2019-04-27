@@ -73,6 +73,12 @@ void setup() {
   logger.include(&ef);
   logger.include(&button_sampler);
   logger.init();
+  analogWriteFrequency(3, 5859);
+  analogWriteFrequency(4, 5859);
+  analogWriteFrequency(5, 5859);
+  analogWriteFrequency(6, 5859);
+  analogWriteFrequency(22, 5859);
+  analogWriteFrequency(23, 5859);
 
   printer.init();
   ef.init();
