@@ -45,7 +45,7 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
   uV = 0.0;
 
   // figure out how long it's been since boot (mod by total cycle time)
-  currentTime = (millis() - startTime) % 140000;
+  currentTime = (millis() - startTime) % 30000;
 
   // *********** HARD CODING IN MOVEMENT FOR THE ROBOT ***********
   // check if we've run the move forward/take video/dive more than 10 times
@@ -56,17 +56,17 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
     uV = 0.0;
   }
   // move forward for 20 seconds
-  else if((currentTime >= beginMoving) && (currentTime <= beginMoving + 20000)) {
-    uL = 200.0;
-    uR = 200.0;
-    uV = 0.0;
+  else if((currentTime >= beginMoving) && (currentTime <= beginMoving + 10000)) {
+    uL = 0.0;
+    uR = 0.0;
+    uV = 200.0;
     condCounter++;
   }
   // trigger the camera to take video at surface level
-  else if((currentTime >= beginMoving + 20001) && (currentTime <= beginMoving + 23000)){
+  else if((currentTime >= beginMoving + 15000) && (currentTime <= beginMoving + 30000)){
     uL = 0.0;
     uR = 0.0;
-    uV = 0.0;
+    uV = -200.0;
     digitalWrite(A3, HIGH);
     condCounter++;
   }
