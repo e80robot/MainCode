@@ -112,7 +112,7 @@ void SensorMPU::read(void) {
 }
 
 String SensorMPU::printRollPitchHeading(void) {
-  String printString = "IMU:"; 
+  String printString = "MPU:"; 
   printString += " roll: ";
   printString += String(state.roll);
   printString += "[deg],";

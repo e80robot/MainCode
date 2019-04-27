@@ -173,14 +173,12 @@ void loop() {
     imu.read();     // blocking I2C calls
   }
 
-<<<<<<< HEAD
+
   if ( currentTime-mpu.lastExecutionTime >= LOOP_PERIOD ) {
     mpu.lastExecutionTime = currentTime;
     mpu.read();     // blocking I2C calls
   }
  
-=======
->>>>>>> 750ffcaa27ffacd394c2fe9130fc811b201bffd3
   if (true) { // currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
     gps.lastExecutionTime = currentTime;
     gps.read(&GPS); // blocking UART calls
