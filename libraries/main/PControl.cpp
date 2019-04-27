@@ -1,3 +1,4 @@
+
 #include "PControl.h"
 #include "Printer.h"
 
@@ -27,7 +28,7 @@ void PControl::init(const int totalWayPoints_in, const int stateDims_in, double 
   // ************************************
   // ***** CHANGE FOR DEPLOYMENT ********
   // ************************************
-  beginMoving = startTime + 10000;
+  beginMoving = startTime;
   // a variable to help determine when to stop moving
   condCounter = 0;
 }
@@ -44,24 +45,25 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
   uV = 0.0;
 
   // figure out how long it's been since boot (mod by total cycle time)
-  currentTime = (millis() - startTime) % 110000;
+  currentTime = (millis() - startTime) % 140000;
 
   // *********** HARD CODING IN MOVEMENT FOR THE ROBOT ***********
   // check if we've run the move forward/take video/dive more than 10 times
-  if (condCounter >= 50){
+  if (condCounter >= 1100000){
+    Serial.println("hit the cond limit");
     uL = 0.0;
     uR = 0.0;
     uV = 0.0;
   }
   // move forward for 20 seconds
   else if((currentTime >= beginMoving) && (currentTime <= beginMoving + 20000)) {
-    uL = 255.0;
-    uR = 255.0;
+    uL = 200.0;
+    uR = 200.0;
     uV = 0.0;
     condCounter++;
   }
   // trigger the camera to take video at surface level
-  else if((currentTime >= beginMoving + 23000) && (currentTime <= beginMoving + 23200)){
+  else if((currentTime >= beginMoving + 20001) && (currentTime <= beginMoving + 23000)){
     uL = 0.0;
     uR = 0.0;
     uV = 0.0;
@@ -72,19 +74,19 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
   else if((currentTime >= beginMoving + 60000) && (currentTime <= beginMoving + 65000)){
     uL = 0.0;
     uR = 0.0;
-    uV = 255.0;
+    uV = -200.0;
     condCounter++;
   }
   // trigger camera to take video at the depth we've arrived at
-  else if((currentTime >= beginMoving + 65000) && (currentTime <= beginMoving + 65200)){
+  else if((currentTime >= beginMoving + 65001) && (currentTime <= beginMoving + 65200)){
     uL = 0.0;
     uR = 0.0;
     uV = 0.0; // this should be some value which holds us stationart (0.0 now)
     digitalWrite(A3, HIGH);
     condCounter++;
   }
-  // return to the surface (estimated 10 seconds required)
-  else if((currentTime >= beginMoving + 100000) && (currentTime <= beginMoving + 110000)){
+  // return to the surface (estimated 40 seconds required)
+  else if((currentTime >= beginMoving + 100000) && (currentTime <= beginMoving + 140000)){
     uL = 0.0;
     uR = 0.0;
     uV = -255.0;
@@ -94,7 +96,7 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p){
 
 String PControl::printString(void) {
   String printString = "";
-  if(!gpsAcquired){
+  if(false){
     printString += "PControl: Waiting to acquire more satellites...";
   }
   else{
@@ -117,7 +119,7 @@ String PControl::printString(void) {
 
 String PControl::printWaypointUpdate(void) {
   String wayPointUpdate = "";
-  if(!gpsAcquired){
+  if(false){
     wayPointUpdate += "PControl: Waiting to acquire more satellites...";
   }
   else{
