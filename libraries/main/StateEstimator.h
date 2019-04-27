@@ -47,8 +47,8 @@ private:
   // const float origin_lon = -117.712567;
 
   // Parsons
-  const float origin_lat = 33.461431;
-  const float origin_lon = -117.705481;
+  const float origin_lat = 33.461175;
+  const float origin_lon = -117.706056;
 
   bool gpsAcquired;
 
