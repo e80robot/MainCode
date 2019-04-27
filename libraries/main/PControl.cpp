@@ -57,7 +57,7 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p) {
     u = Kp*angleDiff(yaw_des - yaw);
     // keep us at the surface (260 is roughly the surface level reading)
     if(analogRead(A0) > 260){
-      uv = -200.0;
+      uV = -200.0;
     }
     else{
       uV = 0.0;
