@@ -151,6 +151,6 @@ void SensorIMU::getOrientation(float ax, float ay, float az, float mx, float my,
   // convert to degrees
   state.roll *= 180.0/PI_F;
   state.pitch *= 180.0/PI_F;
-  state.heading *= 180.0/PI_F;
+  state.heading *= 180.0/PI_F+90;
   
 }

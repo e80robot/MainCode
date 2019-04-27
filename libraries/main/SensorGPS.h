@@ -5,7 +5,7 @@
 
 // Number of aquired satellites needed for accurate position measurement
 // 6 is recommeneded
-#define N_SATS_THRESHOLD 6 
+#define N_SATS_THRESHOLD 4 
 
 
 #include <Arduino.h>
