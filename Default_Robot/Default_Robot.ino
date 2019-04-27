@@ -3,9 +3,9 @@ Default E80 Code
 Current Author:
     Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
 Previous Contributors:
-    Christopher McElroy (cmcelroy@g.hmc.edu) '19 (contributed in 2017)  
+    Christopher McElroy (cmcelroy@g.hmc.edu) '19 (contributed in 2017)
     Josephine Wong (jowong@hmc.edu) '18 (contributed in 2016)
-    Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)                    
+    Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)
 */
 
 #include <Arduino.h>
@@ -62,7 +62,7 @@ double waypoints [] = { 125, -40, 150, -40, 125, -40  };   // listed as x0,y0,x1
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  
+
   logger.include(&imu);
   logger.include(&mpu);
   logger.include(&gps);
@@ -90,9 +90,13 @@ void setup() {
   motor_driver.init();
   led.init();
 
+  const int number_of_waypoints = 4;
+  const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
+  //double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
+  double waypoints [] = { -20, 0, -20, 20, 0, 20, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
   pcontrol.init(number_of_waypoints, waypoint_dimensions, waypoints);
-  
-  state_estimator.init(); 
+
+  state_estimator.init();
 
   printer.printMessage("Starting main loop",10);
   loopStartTime = millis();
@@ -114,15 +118,15 @@ void setup() {
 
 void loop() {
   currentTime=millis();
-    
-   
+
+
   if ( currentTime-printer.lastExecutionTime >= LOOP_PERIOD ) {
     printer.lastExecutionTime = currentTime;
     printer.printValue(0,adc.printSample());
     printer.printValue(1,ef.printStates());
     printer.printValue(2,logger.printState());
-    printer.printValue(3,gps.printState());   
-    printer.printValue(4,state_estimator.printState());     
+    printer.printValue(3,gps.printState());
+    printer.printValue(4,state_estimator.printState());
     printer.printValue(5,pcontrol.printWaypointUpdate());
     printer.printValue(6,pcontrol.printString());
     printer.printValue(7,motor_driver.printState());
@@ -140,7 +144,7 @@ void loop() {
 
   if ( currentTime-adc.lastExecutionTime >= LOOP_PERIOD ) {
     adc.lastExecutionTime = currentTime;
-    adc.updateSample(); 
+    adc.updateSample();
   }
 
   if ( currentTime-ef.lastExecutionTime >= LOOP_PERIOD ) {
@@ -169,11 +173,14 @@ void loop() {
     imu.read();     // blocking I2C calls
   }
 
+<<<<<<< HEAD
   if ( currentTime-mpu.lastExecutionTime >= LOOP_PERIOD ) {
     mpu.lastExecutionTime = currentTime;
     mpu.read();     // blocking I2C calls
   }
  
+=======
+>>>>>>> 750ffcaa27ffacd394c2fe9130fc811b201bffd3
   if (true) { // currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
     gps.lastExecutionTime = currentTime;
     gps.read(&GPS); // blocking UART calls
@@ -183,7 +190,7 @@ void loop() {
     state_estimator.lastExecutionTime = currentTime;
     state_estimator.updateState(&imu.state, &gps.state);
   }
-  
+
   if ( currentTime-led.lastExecutionTime >= LOOP_PERIOD ) {
     led.lastExecutionTime = currentTime;
     led.flashLED(&gps.state);
