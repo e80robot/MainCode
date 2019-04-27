@@ -13,7 +13,7 @@ inline float angleDiff(float a) {
   return a;
 }
 
-PControl::PControl(void) 
+PControl::PControl(void)
 : DataSource("u,uL,uR,yaw,yaw_des","float,float,float,float,float"){}
 
 
@@ -28,7 +28,7 @@ int PControl::getWayPoint(int dim) {
 }
 
 void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p) {
-    // push a high out of the desired pin to trigger the pi sequence to take video 
+    // push a high out of the desired pin to trigger the pi sequence to take video
   if (millis() < piTriggerTime) digitalWrite(A3, HIGH);
   else digitalWrite(A3, LOW);
 
@@ -55,7 +55,13 @@ void PControl::calculateControl(state_t * state, gps_state_t * gps_state_p) {
     yaw_des = atan2(y_des - state->y, x_des - state->x);
     yaw = state->yaw;
     u = Kp*angleDiff(yaw_des - yaw);
-
+    // keep us at the surface (260 is roughly the surface level reading)
+    if(analogRead(A0) > 260){
+      uv = -200.0;
+    }
+    else{
+      uV = 0.0;
+    }
     uL = max(0.0,min(255.0,(avgPower - u)*Kl));
     uR = max(0.0,min(255.0,(avgPower + u)*Kr));
 
@@ -88,7 +94,7 @@ String PControl::printString(void) {
     printString += String(uL);
     printString += ", u_R: ";
     printString += String(uR);
-  } 
+  }
   return printString;
 }
 
@@ -111,7 +117,7 @@ String PControl::printWaypointUpdate(void) {
 void PControl::updatePoint(float x, float y) {
   // note that this means we will not take data on the last waypoint-- by convention sould be pick up point
   if (currentWayPoint == totalWayPoints) return; // don't check if finished
-  
+
   // get the next waypoint
   int x_des = getWayPoint(0);
   int y_des = getWayPoint(1);
