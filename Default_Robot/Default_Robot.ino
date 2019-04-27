@@ -130,7 +130,7 @@ void loop() {
     printer.printValue(5,pcontrol.printWaypointUpdate());
     printer.printValue(6,pcontrol.printString());
     printer.printValue(7,motor_driver.printState());
-    printer.printValue(8,imu.printRollPitchHeading());        
+    printer.printValue(8,imu.printRollPitchHeading());
     printer.printValue(9,mpu.printRollPitchHeading());
     printer.printToSerial();  // To stop printing, just comment this line out
   }
@@ -178,7 +178,7 @@ void loop() {
     mpu.lastExecutionTime = currentTime;
     mpu.read();     // blocking I2C calls
   }
- 
+
   if (true) { // currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
     gps.lastExecutionTime = currentTime;
     gps.read(&GPS); // blocking UART calls
