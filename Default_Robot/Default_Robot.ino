@@ -56,8 +56,8 @@ volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 
 const int number_of_waypoints = 5;
 const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
-//double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
-double waypoints [] = { 0,0,-20, 0, -20, 20, 0, 20, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
+double waypoints [] = { 0, 0, 0, 10, 10, 10, 0, 10, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
+//double waypoints [] = { 0, 0, 0, 20, 63, 83, 13, 33 };   // listed as x0,y0,x1,y1, ... etc.
 
 ////////////////////////* Setup *////////////////////////////////
 
