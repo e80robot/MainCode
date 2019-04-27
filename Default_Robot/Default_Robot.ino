@@ -54,10 +54,10 @@ int currentTime;
 int current_way_point = 0;
 volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 
-const int number_of_waypoints = 5;
+const int number_of_waypoints = 4;
 const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
 //double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
-double waypoints [] = { 125, -40, 150, -40, 125, -40  };   // listed as x0,y0,x1,y1, ... etc.
+double waypoints [] = { -20, 0, -20, 20, 0, 20, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
 
 ////////////////////////* Setup *////////////////////////////////
 
@@ -90,10 +90,7 @@ void setup() {
   motor_driver.init();
   led.init();
 
-  const int number_of_waypoints = 4;
-  const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
-  //double waypoints [] = { 0, 10, 10, 10, 10, 0, 0, 0, 0, 20 };   // listed as x0,y0,x1,y1, ... etc.
-  double waypoints [] = { -20, 0, -20, 20, 0, 20, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
+
   pcontrol.init(number_of_waypoints, waypoint_dimensions, waypoints);
 
   state_estimator.init();
@@ -139,7 +136,7 @@ void loop() {
     pcontrol.lastExecutionTime = currentTime;
     pcontrol.calculateControl(&state_estimator.state, &gps.state);
     //motor_driver.drive(pcontrol.uL,pcontrol.uR,0);
-    motor_driver.drive(pcontrol.uL,pcontrol.uR,pcontrol.uV);
+    motor_driver.drive(-pcontrol.uL,-pcontrol.uR,pcontrol.uV);
   }
 
   if ( currentTime-adc.lastExecutionTime >= LOOP_PERIOD ) {
