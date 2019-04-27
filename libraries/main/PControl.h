@@ -39,6 +39,7 @@ public:
   float avgPower = 80.0; // average forward thrust
   float uR;             // right motor effort
   float uL;             // left motor effort
+  float uV;             // set vertical motor effort
   unsigned long piTriggerTime; // a variable we'll use to make the microscope run
 
 
