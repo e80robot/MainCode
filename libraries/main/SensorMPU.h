@@ -1,39 +1,45 @@
-#ifndef __SENSOR_IMU_H__
-#define __SENSOR_IMU_H__
+#ifndef __SENSOR_MPU_H__
+#define __SENSOR_MPU_H__
 
 #include <Arduino.h>
 #include <Wire.h>
-#include "LSM303CTypes.h"
 #include "SparkFunIMU.h"
-#include "SparkFunLSM303C.h"
 #include "DataSource.h"
+#include <MPU9250.h>
+#include <quaternionFilters.h>
+
+#define MPU9250_ADDRESS MPU9250_ADDRESS_AD0
 
 typedef struct {
   float accelX;   // [mg] (g=accleration due to gravity)
   float accelY;   // [mg]
   float accelZ;   // [mg]
+  float gyroX;    // [deg/sec]
+  float gyroY;    // [deg/sec]
+  float gyroZ;    // [deg/sec]
   float magX;     // [Gauss]
   float magY;     // [Gauss]
   float magZ;     // [Gauss]
   float roll;     // [degrees]
   float pitch;    // [degrees]
   float heading;  // [degrees] CW from magnetic north
-} imu_state_t;
+  float deltat;   // time since last iteration
+} mpu_state_t;
 
 class SensorMPU : public DataSource {
 public:
   SensorMPU(void);
 
   // Starts the connection to the sensor
-  void init(void);
+  void init();
 
   // Reads data from the sensor
-  void read(void);
+  void read();
 
-  void getOrientation(float ax, float ay, float az, float mx, float my, float mz); 
+  void getOrientation(); 
 
   // Latest reported orientation data is stored here
-  imu_state_t state; 
+  mpu_state_t state; 
 
   // prints state to serial
   String printRollPitchHeading(void);
@@ -63,12 +69,17 @@ private:
 
   // Offsets applied to raw x/y/z mag values
   // float mag_offsets[3]        = { 0.00,  0.00,  0.00 };
+  // float mag_offsets[3]        = { -0.3806,  -0.3517,  -0.2626 }; // inbuilt
   float mag_offsets[3]        = { 512.3940, 162.3150, -317.5965 };
 
   // Soft iron error compensation matrix
   // float mag_ironcomp[3][3] =  { {  1.00,     0.00,     0.00   },
   //                               {  0.00,     1.00,     0.00   },
   //                               {  0.00,     0.00,     1.00   } };
+
+  // float mag_ironcomp[3][3] =  { {  3.5493,     -0.1715,     -0.2056   },
+  //                               {  0.00,     3.6553,     0.1126   },
+  //                               {  0.00,     0.00,     3.7611   } }; // inbuilt
   float mag_ironcomp[3][3] =  { {  0.0024,   0.0003,   0.0002   },
                                 {  0.00,     0.0021,   0.0002   },
                                 {  0.00,     0.00,     0.0020   } };
@@ -76,3 +87,4 @@ private:
 };
 
 #endif
+

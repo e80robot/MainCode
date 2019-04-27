@@ -1,16 +1,16 @@
-#include "SensorIMU.h"
+#include "SensorMPU.h"
 #include "Printer.h"
 #include <MPU9250.h>
 #include <quaternionFilters.h>
 
 extern Printer printer;
 
-SensorIMU::SensorIMU(void)
+SensorMPU::SensorMPU(void)
   : DataSource("rollIMU,pitchIMU,headingIMU,accelX,accelY,accelZ,gyroX,gyroY,gyroZ,magX,magY,magZ,time",
                "float,float,float,float,float,float,float,float,float,float,float,float,long"), myIMU(0x68, Wire, 400000) {
 }
 
-void SensorIMU::init(void) {
+void SensorMPU::init(void) {
   Serial.print("Initializing IMU... ");
   myIMU.MPU9250SelfTest(myIMU.selfTest);
   myIMU.calibrateMPU9250(myIMU.gyroBias, myIMU.accelBias);
@@ -23,7 +23,7 @@ void SensorIMU::init(void) {
   start_time = millis();
 }
 
-void SensorIMU::read(void) {
+void SensorMPU::read(void) {
 
   // Get new data samples
 
@@ -111,7 +111,7 @@ void SensorIMU::read(void) {
   myIMU.delt_t = millis() - myIMU.count;
 }
 
-String SensorIMU::printRollPitchHeading(void) {
+String SensorMPU::printRollPitchHeading(void) {
   String printString = "IMU:"; 
   printString += " roll: ";
   printString += String(state.roll);
@@ -125,7 +125,7 @@ String SensorIMU::printRollPitchHeading(void) {
   return printString; 
 }
 
-String SensorIMU::printAccels(void) {
+String SensorMPU::printAccels(void) {
   String printString = "IMU:";
 
   printString += " accelX: ";
@@ -163,7 +163,7 @@ String SensorIMU::printAccels(void) {
   */
 }
 
-size_t SensorIMU::writeDataBytes(unsigned char * buffer, size_t idx) {
+size_t SensorMPU::writeDataBytes(unsigned char * buffer, size_t idx) {
   float * data_slot = (float *) &buffer[idx];
   data_slot[0] = state.roll;
   data_slot[1] = state.pitch;
@@ -184,7 +184,7 @@ size_t SensorIMU::writeDataBytes(unsigned char * buffer, size_t idx) {
 }
 
 
-void SensorIMU::getOrientation() {
+void SensorMPU::getOrientation() {
   // copied from Adafruit_Simple_AHRS
     MadgwickQuaternionUpdate(myIMU.ax, myIMU.ay, myIMU.az, myIMU.gx * DEG_TO_RAD,
                          myIMU.gy * DEG_TO_RAD, myIMU.gz * DEG_TO_RAD, myIMU.my,

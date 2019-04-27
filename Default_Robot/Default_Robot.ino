@@ -18,6 +18,7 @@ Previous Contributors:
 #include <TimingOffsets.h>
 #include <SensorGPS.h>
 #include <SensorIMU.h>
+#include <SensorMPU.h>
 #include <StateEstimator.h>
 #include <ADCSampler.h>
 #include <ErrorFlagSampler.h>
