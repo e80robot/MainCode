@@ -78,6 +78,7 @@ void setup() {
   ef.init();
   button_sampler.init();
   imu.init();
+  mpu.init();
   UartSerial.begin(9600);
   gps.init(&GPS);
   motor_driver.init();
