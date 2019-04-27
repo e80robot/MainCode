@@ -41,6 +41,7 @@ ADCSampler adc;
 ErrorFlagSampler ef;
 ButtonSampler button_sampler;
 SensorIMU imu;
+SensorMPU mpu;
 Logger logger;
 Printer printer;
 GPSLockLED led;
@@ -62,6 +63,7 @@ double waypoints [] = { 125, -40, 150, -40, 125, -40  };   // listed as x0,y0,x1
 void setup() {
   
   logger.include(&imu);
+  logger.include(&mpu);
   logger.include(&gps);
   logger.include(&state_estimator);
   logger.include(&pcontrol);
@@ -88,6 +90,7 @@ void setup() {
   loopStartTime = millis();
   printer.lastExecutionTime         = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET ;
   imu.lastExecutionTime             = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
+  mpu.lastExecutionTime             = loopStartTime - LOOP_PERIOD + MPU_LOOP_OFFSET;
   gps.lastExecutionTime             = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
   adc.lastExecutionTime             = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
   ef.lastExecutionTime              = loopStartTime - LOOP_PERIOD + ERROR_FLAG_LOOP_OFFSET;
@@ -116,7 +119,7 @@ void loop() {
     printer.printValue(6,pcontrol.printString());
     printer.printValue(7,motor_driver.printState());
     printer.printValue(8,imu.printRollPitchHeading());        
-    printer.printValue(9,imu.printAccels());
+    printer.printValue(9,mpu.printRollPitchHeading());
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 
@@ -156,6 +159,11 @@ void loop() {
   if ( currentTime-imu.lastExecutionTime >= LOOP_PERIOD ) {
     imu.lastExecutionTime = currentTime;
     imu.read();     // blocking I2C calls
+  }
+
+  if ( currentTime-mpu.lastExecutionTime >= LOOP_PERIOD ) {
+    mpu.lastExecutionTime = currentTime;
+    mpu.read();     // blocking I2C calls
   }
  
   if (true) { // currentTime-gps.lastExecutionTime >= LOOP_PERIOD ) {
